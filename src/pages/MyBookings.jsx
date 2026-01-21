@@ -1,97 +1,92 @@
-import React, { useState } from "react";
-import Title from "../components/Title";
-import { assets, userBookingsDummyData } from "../assets/assets";
+import React, { useEffect, useState } from "react";
+import { roomsDummyData } from "../assets/assets";
+import { useNavigate } from "react-router-dom";
+
+import AnimatedPage from "../components/AnimatedPage";
 
 const MyBookings = () => {
-  const [bookings, setBookings] = useState(userBookingsDummyData);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      setError("");
+      const token = localStorage.getItem("token");
+      try {
+        if (token) {
+          const res = await fetch("http://localhost:5000/api/bookings", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) {
+            throw new Error("Failed to fetch bookings");
+          }
+          const data = await res.json();
+          setBookings(data || []);
+        } else {
+          // fallback to mock bookings stored locally
+          const mock = JSON.parse(localStorage.getItem("mockBookings") || "[]");
+          setBookings(mock);
+        }
+      } catch (err) {
+        console.error(err);
+        const mock = JSON.parse(localStorage.getItem("mockBookings") || "[]");
+        if (mock.length) {
+          setBookings(mock);
+        } else {
+          setError(
+            "Could not retrieve bookings. If you are in dev, enable mock bookings or start backend."
+          );
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
+  }, [navigate]);
 
   return (
-    <div className="py-28 md:pb-35 md:pt-32 px-4 md:px-16 lg:px-24 xl:px-32">
-      <Title
-        title="My Bookings"
-        subTitle="Easily manage past, current, and upcoming hotel reservations in one place. Plan your trips seamlessly with just a few clicks"
-        align="left"
-      />
+    <AnimatedPage className="py-28 px-4 md:px-16 lg:px-24 xl:px-32">
+      <h1 className="text-3xl font-playfair mb-6">My Bookings</h1>
 
-      <div className="max-w-6xl mt-8 w-full text-gray-800">
-        <div className="hidden md:grid md:grid-cols-[3fr_2fr_1fr] w-full border-b border-gray-300 font-medium text-base py-3">
-          <div className="w-1/3">Hotels</div>
-          <div className="w-1/3">Date & Timings</div>
-          <div className="w-1/3">Payment</div>
-        </div>
+      {loading && <p>Loading your bookings...</p>}
+      {error && <p className="text-rose-500">{error}</p>}
 
-        {bookings.map((booking) => (
-          <div
-            key={booking._id}
-            className="grid grid-cols-1 md:grid-cols-[3fr_2fr_1fr] w-full border-b border-gray-300 py-6 first:border-t"
-          >
-            {/* Hotel Details  */}
-            <div className="flex flex-col md:flex-row">
-              <img
-                src={booking.room.images[0]}
-                alt=""
-                className="min-md:w-44 rounded shadow object-cover"
-              />
-              <div className="flex flex-col gap-1.5 max-md:mt-3 min-md:ml-4">
-                <p className="font-playfair text-2xl">
-                  {booking.hotel.name}
-                  <span className="font-inter text-sm">
-                    {" "}
-                    ({booking.room.roomType})
-                  </span>
-                </p>
-                <div className="flex items-center gap-1 text-sm text-gray-500">
-                  <img src={assets.locationIcon} alt="" />
-                  <span>{booking.hotel.address}</span>
+      {!loading && bookings.length === 0 && <p>No bookings found.</p>}
+
+      <div className="space-y-4">
+        {bookings.map((b) => {
+          const room = roomsDummyData.find((r) => r._id === b.roomId) || {};
+          return (
+            <div
+              key={b.bookingId || b.id || `${b.roomId}-${b.checkIn}`}
+              className="bg-white rounded-xl p-4 shadow-md"
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-lg font-semibold">
+                    {room.hotel?.name || "Hotel"}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {b.checkIn} → {b.checkOut} ({b.nights} nights)
+                  </p>
                 </div>
-                <div className="flex items-center gap-1 text-sm text-gray-500">
-                  <img src={assets.guestsIcon} alt="" />
-                  <span>Guests: {booking.guests}</span>
+                <div className="text-right">
+                  <p className="text-sm text-gray-500">Total</p>
+                  <p className="font-medium">
+                    ₹{(b.totalPrice || 0).toLocaleString("en-IN")}
+                  </p>
                 </div>
-                <p className="text-base">Total: ${booking.totalPrice}</p>
               </div>
             </div>
-            {/* Date & Timings */}
-            <div className="flex flex-row md:items-center md:gap-12 mt-3 gap-8">
-              <div>
-                <p>Check-In:</p>
-                <p className="text-gray-500 text-sm">
-                  {new Date(booking.checkInDate).toDateString()}
-                </p>
-              </div>
-              <div>
-                <p>Check-Out:</p>
-                <p className="text-gray-500 text-sm">
-                  {new Date(booking.checkOutDate).toDateString()}
-                </p>
-              </div>
-            </div>
-            {/* Payment Status */}
-            <div className="flex flex-col items-start justify-center pt-3">
-              <div className="flex items-center gap-2">
-                <div
-                  className={`h-3 w-3 rounded-full ${
-                    booking.isPaid ? "bg-green-500" : "bg-red-500"
-                  }`}
-                ></div>
-                <p
-                  className={`text-sm ${
-                    booking.isPaid ? "text-green-500" : "text-red-500"
-                  }`}
-                >
-                  {booking.isPaid ? "Paid" : "Unpaid"}
-                </p>
-              </div>
-              {!booking.isPaid && (
-                <button className="px-4 py-1.5 mt-4 texst-xs border border-gray-400 rounded-full hover:bg-gray-50 transition-all cursor-pointer">
-                  Pay Now
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
-    </div>
+    </AnimatedPage>
   );
 };
 

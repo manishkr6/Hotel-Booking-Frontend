@@ -1,0 +1,7 @@
+.district-image {
+  transition: transform 0.5s ease-in-out;
+}
+
+.group:hover .district-image {
+  transform: scale(1.15);
+}

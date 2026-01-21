@@ -11,6 +11,182 @@
   font-family: outfit;
 }
 
-.font-playfair {
-  font-family: "Playfair" !important;
+.input-glass {
+  @apply w-full px-3 py-2.5 rounded-xl bg-white/10 text-white
+         border border-white/30 outline-none
+         focus:border-white transition;
 }
+
+.label-glass {
+  @apply absolute left-3 top-2.5 text-sm text-white/70
+         peer-focus:-top-3 peer-focus:text-xs
+         peer-focus:bg-black/60 peer-focus:px-1
+         peer-not-placeholder-shown:-top-3
+         peer-not-placeholder-shown:text-xs
+         transition-all;
+}
+
+@keyframes fadeSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide {
+  animation: fadeSlide 0.8s ease-out both;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide {
+  animation: fadeSlide 0.8s ease-out both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out both;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide {
+  animation: fadeSlide 0.8s ease-out both;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide {
+  animation: fadeSlide 0.8s ease-out both;
+}
+
+/* 3D Perspective */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* Glass Input */
+.input-glass {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.75rem;
+  padding: 0.65rem 1rem;
+  color: white;
+  outline: none;
+}
+
+.input-glass::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.input-glass:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.3);
+}
+
+/* Floating Card Animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.float-card {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* 3D Perspective */
+.perspective-1200 {
+  perspective: 1200px;
+}
+.district-cinematic {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.4s ease;
+}
+
+.district-cinematic:hover {
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3);
+}
+
+/* Clear photo with depth */
+.district-photo {
+  transform: scale(1.15) translateZ(-40px);
+  transition: transform 0.7s ease;
+}
+
+.district-cinematic:hover .district-photo {
+  transform: scale(1.28) translateZ(-20px);
+}
+
+/* Push text forward in 3D space */
+.district-cinematic span {
+  transform: translateZ(45px);
+}
+
+/* 3D perspective container */
+.perspective-container {
+  perspective: 1200px;
+}
+
+/* Card depth */
+.featured-card {
+  transform-style: preserve-3d;
+  transition: box-shadow 0.4s ease;
+}
+
+.featured-card:hover {
+  box-shadow: 0 35px 70px rgba(0, 0, 0, 0.18);
+}
+
+/* Shared 3D perspective */
+.perspective-container {
+  perspective: 1200px;
+}
+
